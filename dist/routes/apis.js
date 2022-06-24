@@ -36,7 +36,7 @@ router.get("/readMultiple", (req, res, next) => __awaiter(void 0, void 0, void 0
         function processLineByLine() {
             var e_1, _a;
             return __awaiter(this, void 0, void 0, function* () {
-                const newfileStream = fs_1.default.createReadStream(`.././Node_Streams/data.json`);
+                const newfileStream = fs_1.default.createReadStream(`.././Node_Streams/data.jsonl`);
                 const rl = readline.createInterface({
                     input: newfileStream,
                     crlfDelay: Infinity,
@@ -130,11 +130,15 @@ router.get("/writeMultiple", (req, res, next) => __awaiter(void 0, void 0, void 
                     else {
                         new_count = 6;
                     }
-                    const writeStream = fs_1.default.createWriteStream(`.././Node_Streams/email${i}.txt`, {
+                    const writeStream = fs_1.default.createWriteStream(`.././Node_Streams/email${i}.jsonl`, {
                         flags: "a",
                     });
                     if (count >= new_count) {
-                        writeStream.write(d);
+                        if (d.slice(-1) === ",") {
+                            d = d.slice(0, d.length - 1);
+                            // console.log(d);
+                        }
+                        writeStream.write("{" + d + "}");
                         i++;
                         count = 0;
                         d = "";

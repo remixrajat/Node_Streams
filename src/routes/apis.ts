@@ -6,6 +6,7 @@ const es = require("event-stream");
 const readline = require("readline");
 import { Readable } from "node:stream";
 import { Transform, Writable } from "node:stream";
+import { idText } from "typescript";
 const router = Router();
 
 router.get("/readMultiple", async (req: any, res: any, next) => {
@@ -14,7 +15,7 @@ router.get("/readMultiple", async (req: any, res: any, next) => {
       read() {},
     });
     async function processLineByLine() {
-      const newfileStream = fs.createReadStream(`.././Node_Streams/data.json`);
+      const newfileStream = fs.createReadStream(`.././Node_Streams/data.jsonl`);
       const rl = readline.createInterface({
         input: newfileStream,
         crlfDelay: Infinity,
@@ -104,13 +105,17 @@ router.get("/writeMultiple", async (req: any, res: any, next) => {
               }
 
               const writeStream = fs.createWriteStream(
-                `.././Node_Streams/email${i}.txt`,
+                `.././Node_Streams/email${i}.jsonl`,
                 {
                   flags: "a",
                 }
               );
               if (count >= new_count) {
-                writeStream.write(d);
+                if (d.slice(-1) === ",") {
+                  d = d.slice(0, d.length - 1);
+                  // console.log(d);
+                }
+                writeStream.write("{" + d + "}");
                 i++;
                 count = 0;
                 d = "";
