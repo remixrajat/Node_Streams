@@ -76,13 +76,12 @@ router.get("/writeMultiple", async (req: any, res: any, next) => {
     let i = 1;
     let d = "";
     let count = 0;
+    let new_count = 5;
     axios({
       method: "get",
       url: "http://localhost:8000/readMultiple",
       responseType: "stream",
     }).then(function (response) {
-      // let i = 1;
-
       response.data
         .pipe(
           new Transform({
@@ -98,19 +97,26 @@ router.get("/writeMultiple", async (req: any, res: any, next) => {
             write(chunk, enc, cb) {
               count++;
               // console.log(chunk.toString(), "uuuuuuuuuuuuuuu");
-              if (!chunk.toString().startsWith("{")) d += chunk.toString();
+              if (!chunk.toString().startsWith("{")) {
+                d += chunk.toString();
+              } else {
+                new_count = 6;
+              }
+
               const writeStream = fs.createWriteStream(
                 `.././Node_Streams/email${i}.txt`,
                 {
                   flags: "a",
                 }
               );
-              if (count >= 5) {
+              if (count >= new_count) {
                 writeStream.write(d);
                 i++;
                 count = 0;
                 d = "";
+                new_count = 5;
               }
+
               return cb();
             },
           })

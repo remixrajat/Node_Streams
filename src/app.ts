@@ -9,11 +9,6 @@ dotenv.config();
 const app = express();
 app.use(bodyParser.json());
 app.use(todosRouter);
-app.use("/", (req, res) => {
-  const stream = fs.createReadStream(`${__dirname}/data.txt`);
-  stream.pipe(res);
-  console.log(res);
-});
 
 const port = 8000;
 
