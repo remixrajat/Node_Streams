@@ -10,7 +10,9 @@ const router = Router();
 
 router.get("/readMultiple", async (req: any, res: any, next) => {
   try {
-    const fileStream = fs.createReadStream(`.././Node_Streams/data.json`);
+    const fileStream = new Readable({
+      read() {},
+    });
     async function processLineByLine() {
       const newfileStream = fs.createReadStream(`.././Node_Streams/data.json`);
       const rl = readline.createInterface({

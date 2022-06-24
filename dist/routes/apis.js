@@ -26,10 +26,13 @@ const zlib = require("zlib");
 const es = require("event-stream");
 const readline = require("readline");
 const node_stream_1 = require("node:stream");
+const node_stream_2 = require("node:stream");
 const router = (0, express_1.Router)();
 router.get("/readMultiple", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const fileStream = fs_1.default.createReadStream(`.././Node_Streams/data.json`);
+        const fileStream = new node_stream_1.Readable({
+            read() { },
+        });
         function processLineByLine() {
             var e_1, _a;
             return __awaiter(this, void 0, void 0, function* () {
@@ -110,13 +113,13 @@ router.get("/writeMultiple", (req, res, next) => __awaiter(void 0, void 0, void 
         }).then(function (response) {
             // let i = 1;
             response.data
-                .pipe(new node_stream_1.Transform({
+                .pipe(new node_stream_2.Transform({
                 objectMode: true,
                 transform(chunk, enc, cb) {
                     cb(null, chunk);
                 },
             }))
-                .pipe(new node_stream_1.Writable({
+                .pipe(new node_stream_2.Writable({
                 objectMode: true,
                 write(chunk, enc, cb) {
                     count++;
