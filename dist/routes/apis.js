@@ -36,7 +36,7 @@ router.get("/readMultiple", (req, res, next) => __awaiter(void 0, void 0, void 0
         function processLineByLine() {
             var e_1, _a;
             return __awaiter(this, void 0, void 0, function* () {
-                const newfileStream = fs_1.default.createReadStream(`.././Node_Streams/data.jsonl`);
+                const newfileStream = fs_1.default.createReadStream(`.././Node_Streams/email1.jsonl`);
                 const rl = readline.createInterface({
                     input: newfileStream,
                     crlfDelay: Infinity,
@@ -107,47 +107,47 @@ router.get("/writeMultiple", (req, res, next) => __awaiter(void 0, void 0, void 
         let d = "";
         let count = 0;
         let new_count = 5;
-        (0, axios_1.default)({
+        let response = yield (0, axios_1.default)({
             method: "get",
             url: "http://localhost:8000/readMultiple",
             responseType: "stream",
-        }).then(function (response) {
-            response.data
-                .pipe(new node_stream_2.Transform({
-                objectMode: true,
-                transform(chunk, enc, cb) {
-                    cb(null, chunk);
-                },
-            }))
-                .pipe(new node_stream_2.Writable({
-                objectMode: true,
-                write(chunk, enc, cb) {
-                    count++;
-                    // console.log(chunk.toString(), "uuuuuuuuuuuuuuu");
-                    if (!chunk.toString().startsWith("{")) {
-                        d += chunk.toString();
-                    }
-                    else {
-                        new_count = 6;
-                    }
-                    const writeStream = fs_1.default.createWriteStream(`.././Node_Streams/email${i}.jsonl`, {
-                        flags: "a",
-                    });
-                    if (count >= new_count) {
-                        if (d.slice(-1) === ",") {
-                            d = d.slice(0, d.length - 1);
-                            // console.log(d);
-                        }
-                        writeStream.write("{" + d + "}");
-                        i++;
-                        count = 0;
-                        d = "";
-                        new_count = 5;
-                    }
-                    return cb();
-                },
-            }));
         });
+        response.data
+            .pipe(new node_stream_2.Transform({
+            objectMode: true,
+            transform(chunk, enc, cb) {
+                cb(null, chunk);
+            },
+        }))
+            .pipe(new node_stream_2.Writable({
+            objectMode: true,
+            write(chunk, enc, cb) {
+                count++;
+                // console.log(chunk.toString(), "uuuuuuuuuuuuuuu");
+                // if (!chunk.toString().startsWith("{")) {
+                //   d += chunk.toString() + "\n";
+                // } else {
+                //   new_count = 6;
+                // }
+                d += chunk.toString() + "\n";
+                const writeStream = fs_1.default.createWriteStream(`.././Node_Streams/email${i}.jsonl`, {
+                    flags: "a",
+                });
+                if (count >= new_count && chunk) {
+                    // if (d.slice(-1) === ",") {
+                    //   d = d.slice(0, d.length - 1);
+                    //   // console.log(d);
+                    // }
+                    console.log(d);
+                    writeStream.write(d);
+                    i++;
+                    count = 0;
+                    d = "";
+                    new_count = 5;
+                }
+                return cb();
+            },
+        }));
         res.status(200).json({ result: "Success." });
     }
     catch (error) {
