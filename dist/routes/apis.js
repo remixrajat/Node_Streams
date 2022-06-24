@@ -36,7 +36,7 @@ router.get("/readMultiple", (req, res, next) => __awaiter(void 0, void 0, void 0
         function processLineByLine() {
             var e_1, _a;
             return __awaiter(this, void 0, void 0, function* () {
-                const newfileStream = fs_1.default.createReadStream(`.././Node_Streams/email1.jsonl`);
+                const newfileStream = fs_1.default.createReadStream(`.././Node_Streams/data.jsonl`);
                 const rl = readline.createInterface({
                     input: newfileStream,
                     crlfDelay: Infinity,
