@@ -86,7 +86,7 @@ router.get("/writeMultiple", (req, res, next) => __awaiter(void 0, void 0, void 
             objectMode: true,
             write(chunk, enc, cb) {
                 count++;
-                d += chunk.toString().slice(1, chunk.toString().length - 1) + ",";
+                d += chunk.toString() + ",";
                 console.log(d);
                 const writeStream = fs_1.default.createWriteStream(`.././Node_Streams/email${i}.json`, {
                     flags: "a",
@@ -96,7 +96,7 @@ router.get("/writeMultiple", (req, res, next) => __awaiter(void 0, void 0, void 
                         d = d.slice(0, d.length - 1);
                     }
                     console.log(d);
-                    writeStream.write(`{${d}}`);
+                    writeStream.write(`[${d}]`);
                     i++;
                     count = 0;
                     d = "";

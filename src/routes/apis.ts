@@ -59,8 +59,7 @@ router.get("/writeMultiple", async (req: any, res: any, next) => {
           objectMode: true,
           write(chunk, enc, cb) {
             count++;
-
-            d += chunk.toString().slice(1, chunk.toString().length - 1) + ",";
+            d += chunk.toString() + ",";
             console.log(d);
 
             const writeStream = fs.createWriteStream(
@@ -74,7 +73,7 @@ router.get("/writeMultiple", async (req: any, res: any, next) => {
                 d = d.slice(0, d.length - 1);
               }
               console.log(d);
-              writeStream.write(`{${d}}`);
+              writeStream.write(`[${d}]`);
               i++;
               count = 0;
               d = "";
