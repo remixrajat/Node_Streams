@@ -22,8 +22,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const fs_1 = __importDefault(require("fs"));
 const axios_1 = __importDefault(require("axios"));
-const zlib = require("zlib");
-const es = require("event-stream");
 const readline = require("readline");
 const node_stream_1 = require("node:stream");
 const node_stream_2 = require("node:stream");
@@ -60,41 +58,6 @@ router.get("/readMultiple", (req, res, next) => __awaiter(void 0, void 0, void 0
         }
         processLineByLine();
         fileStream.pipe(res);
-        // const stream = fs.createReadStream(`.././Node_Streams/data.json`, {
-        //   highWaterMark: 30,
-        // });
-        // // stream.pipe(res);
-        // let data = "";
-        // stream.on("data", (chunk) => {
-        //   data += chunk;
-        // });
-        // const getDataValue = new Promise((resolve) => {
-        //   stream.on("end", function () {
-        //     resolve(data);
-        //   });
-        // });
-        // let finalData: any = await getDataValue;
-        // let parsedObj = JSON.parse(finalData);
-        // function getKey(key: any) {
-        //   return `${key}`;
-        // }
-        // function* run() {
-        //   for (const item in parsedObj) {
-        //     let sendableIte = {
-        //       [getKey(item)]: parsedObj[item],
-        //     };
-        //     yield sendableIte;
-        //   }
-        // }
-        // const readableStream = new Readable({
-        //   read() {
-        //     for (const data of run()) {
-        //       this.push(JSON.stringify(data).concat("\n"));
-        //     }
-        //     this.push(null);
-        //   },
-        // });
-        // readableStream.pipe(res);
     }
     catch (error) {
         console.log(error);
@@ -123,27 +86,20 @@ router.get("/writeMultiple", (req, res, next) => __awaiter(void 0, void 0, void 
             objectMode: true,
             write(chunk, enc, cb) {
                 count++;
-                // console.log(chunk.toString(), "uuuuuuuuuuuuuuu");
-                // if (!chunk.toString().startsWith("{")) {
-                //   d += chunk.toString() + "\n";
-                // } else {
-                //   new_count = 6;
-                // }
-                d += chunk.toString() + "\n";
-                const writeStream = fs_1.default.createWriteStream(`.././Node_Streams/email${i}.jsonl`, {
+                d += chunk.toString().slice(1, chunk.toString().length - 1) + ",";
+                console.log(d);
+                const writeStream = fs_1.default.createWriteStream(`.././Node_Streams/email${i}.json`, {
                     flags: "a",
                 });
                 if (count >= new_count && chunk) {
-                    // if (d.slice(-1) === ",") {
-                    //   d = d.slice(0, d.length - 1);
-                    //   // console.log(d);
-                    // }
+                    if (d.slice(-1) === ",") {
+                        d = d.slice(0, d.length - 1);
+                    }
                     console.log(d);
-                    writeStream.write(d);
+                    writeStream.write(`{${d}}`);
                     i++;
                     count = 0;
                     d = "";
-                    new_count = 5;
                 }
                 return cb();
             },
